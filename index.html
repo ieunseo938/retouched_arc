@@ -1,538 +1,484 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6d6d6d; -webkit-text-stroke: #6d6d6d}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #6b0001; -webkit-text-stroke: #6b0001}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #fb0007; -webkit-text-stroke: #fb0007}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #0000ff; -webkit-text-stroke: #0000ff}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; -webkit-text-stroke: #000000; min-height: 16.0px}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #4d5055; -webkit-text-stroke: #4d5055}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #093c94; -webkit-text-stroke: #093c94}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #18702b; -webkit-text-stroke: #18702b}
-    span.s1 {font-kerning: none; background-color: #ecf1f7}
-    span.s2 {font-kerning: none; color: #fb0007; background-color: #ecf1f7; -webkit-text-stroke: 0px #fb0007}
-    span.s3 {font-kerning: none; color: #2a2a2a; background-color: #ecf1f7; -webkit-text-stroke: 0px #2a2a2a}
-    span.s4 {font-kerning: none; color: #000000; background-color: #ecf1f7; -webkit-text-stroke: 0px #000000}
-    span.s5 {font-kerning: none; color: #0000ff; background-color: #ecf1f7; -webkit-text-stroke: 0px #0000ff}
-    span.s6 {font-kerning: none; color: #6b0001; background-color: #ecf1f7; -webkit-text-stroke: 0px #6b0001}
-    span.s7 {font-kerning: none}
-    span.s8 {font-kerning: none; color: #137646; background-color: #ecf1f7; -webkit-text-stroke: 0px #137646}
-    span.s9 {font-kerning: none; color: #093c94; background-color: #ecf1f7; -webkit-text-stroke: 0px #093c94}
-    span.s10 {font-kerning: none; color: #4d5055; background-color: #ecf1f7; -webkit-text-stroke: 0px #4d5055}
-    span.s11 {font-kerning: none; color: #18702b; background-color: #ecf1f7; -webkit-text-stroke: 0px #18702b}
-    span.s12 {font-kerning: none; color: #6f0ec3; background-color: #ecf1f7; -webkit-text-stroke: 0px #6f0ec3}
-    span.s13 {font-kerning: none; color: #a4450b; background-color: #ecf1f7; -webkit-text-stroke: 0px #a4450b}
-    span.s14 {font-kerning: none; color: #0e6e6d; background-color: #ecf1f7; -webkit-text-stroke: 0px #0e6e6d}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RETOUCHED: Final Fixed Layout</title>
+    
+    <!-- 폰트: 고운바탕 (파일 없이 인터넷으로 바로 적용) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- MediaPipe Hands -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* 기본 설정 */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #ffffff; /* 흰색 배경 */
+            overflow: hidden;
+            font-family: 'Gowun Batang', serif; /* 고운바탕체 강제 적용 */
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        /* 3D 무대 (화면 전체) */
+        .scene {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            perspective: 2000px;
+            overflow: hidden;
+            z-index: 1; /* 글자보다 뒤에 위치 */
+        }
+
+        /* 카드가 모이는 세상 (화면 정중앙 고정) */
+        .world {
+            position: absolute;
+            top: 50%; left: 50%; /* 무조건 화면 중앙 */
+            width: 0; height: 0;
+            transform-style: preserve-3d;
+            z-index: 10;
+        }
+
+        /* 텍스트 오버레이 (왼쪽 상단 고정, 절대 안 겹치게 z-index 높임) */
+        .overlay-text {
+            position: absolute; 
+            top: 40px; left: 40px; 
+            z-index: 9999; /* 제일 위에 표시 */
+            width: 350px; /* 너비 고정해서 레이아웃 유지 */
+            color: #ff0000; 
+            pointer-events: none; /* 클릭 통과 */
+            background: rgba(255, 255, 255, 0.8); /* 글자 잘 보이게 살짝 배경 깖 */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .overlay-text h1 { 
+            font-size: 1.8rem; margin: 0 0 20px 0; letter-spacing: 1px; font-weight: bold; color: #ff0000;
+        }
+        .overlay-text p { 
+            font-size: 1rem; line-height: 1.6; color: #ff0000; margin-bottom: 20px;
+        }
+        .highlight { font-weight: normal; text-decoration: none; }
+
+        /* 사용법 안내 */
+        .usage-guide { margin-top: 30px; border-top: 1px solid #ffcccc; padding-top: 20px; }
+        .usage-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; display: block; color: #ff0000; }
+        .usage-list { padding: 0; margin: 0; list-style: none; }
+        .usage-list li { margin-bottom: 8px; word-break: keep-all; color: #ff0000; font-size: 0.95rem; }
+
+        /* 아이콘 범례 */
+        .icon-legend {
+            display: flex; justify-content: flex-start; gap: 20px;
+            margin-top: 20px; pointer-events: auto;
+        }
+        .legend-item {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 0.9rem; color: #ff0000; opacity: 0.7; cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .legend-item:hover, .legend-item.active { opacity: 1; transform: scale(1.1); font-weight: bold; }
+        .legend-icon { width: 30px; height: 30px; margin-bottom: 5px; }
+
+        /* 카메라 피드 (배경으로 숨김) */
+        .input_video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.05; filter: grayscale(100%) contrast(1.2); z-index: 0; pointer-events: none;
+            transform: scaleX(-1);
+        }
+
+        .loading-msg {
+            position: absolute; bottom: 20px; right: 20px;
+            color: #ff0000; font-size: 0.8rem; opacity: 0.7;
+            animation: blink 1s infinite; font-family: sans-serif;
+            z-index: 50;
+        }
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        /* 개별 카드 스타일 */
+        .card {
+            position: absolute;
+            /* 중심점 기준 정렬 */
+            left: -85px; top: -102px; 
+            width: 170px; height: 204px; /* 크기 고정 */
+            border-radius: 3px;
+            transform-style: preserve-3d;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .card.hidden { opacity: 0 !important; pointer-events: none; transform: scale(0) !important; }
+        .card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.revealed .card-front { background-size: contain; filter: grayscale(0%) contrast(1); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 3px; }
+        .card-front { background-color: #1a1a1a; background-size: contain; background-repeat: no-repeat; background-position: center; filter: grayscale(100%) contrast(1.1); transition: filter 0.5s; }
+        
+        .card-back {
+            background-color: #f5f5f5; transform: rotateY(180deg); border: 1px solid #e0e0e0;
+            display: flex; justify-content: center; align-items: center; 
+            box-sizing: border-box; color: #ff0000; overflow: hidden; position: relative;
+            background-size: 40px 40px; background-repeat: no-repeat; background-position: center center;
+        }
+
+        /* 설명 텍스트 (7pt 고정) */
+        .description-text {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            padding: 10px; box-sizing: border-box;
+            text-align: center; font-size: 7pt; line-height: 1.5; word-break: keep-all; 
+            color: #ff0000; z-index: 2; font-family: 'Gowun Batang', serif;
+        }
+
+        .scratch-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; cursor: crosshair; touch-action: none;
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">html</span><span class="s4"> </span><span class="s2">lang</span><span class="s3">=</span><span class="s5">"ko"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s5">"UTF-8"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">meta</span><span class="s4"> </span><span class="s2">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s4"> </span><span class="s2">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">title</span><span class="s3">&gt;</span><span class="s1">RETOUCHED: Floating Archive</span><span class="s3">&lt;/</span><span class="s6">title</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 1. 폰트 해결: 파일 필요 없는 웹폰트(고운바탕) 로딩 --&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">link</span><span class="s4"> </span><span class="s2">rel</span><span class="s3">=</span><span class="s1">"preconnect"</span><span class="s4"> </span><span class="s2">href</span><span class="s3">=</span><span class="s1">"https://fonts.googleapis.com"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">link</span><span class="s4"> </span><span class="s2">rel</span><span class="s3">=</span><span class="s1">"preconnect"</span><span class="s4"> </span><span class="s2">href</span><span class="s3">=</span><span class="s1">"https://fonts.gstatic.com"</span><span class="s4"> </span><span class="s2">crossorigin</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">link</span><span class="s4"> </span><span class="s2">href</span><span class="s3">=</span><span class="s1">"https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&amp;display=swap"</span><span class="s4"> </span><span class="s2">rel</span><span class="s3">=</span><span class="s1">"stylesheet"</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- MediaPipe Hands --&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"</span><span class="s4"> </span><span class="s2">crossorigin</span><span class="s3">=</span><span class="s1">"anonymous"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"</span><span class="s4"> </span><span class="s2">crossorigin</span><span class="s3">=</span><span class="s1">"anonymous"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"</span><span class="s4"> </span><span class="s2">crossorigin</span><span class="s3">=</span><span class="s1">"anonymous"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">script</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"</span><span class="s4"> </span><span class="s2">crossorigin</span><span class="s3">=</span><span class="s1">"anonymous"</span><span class="s3">&gt;&lt;/</span><span class="s6">script</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 기본 설정 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">body</span><span class="s1">, </span><span class="s6">html</span><span class="s1"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">margin:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">padding:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-color:</span><span class="s4"> </span><span class="s9">#ffffff</span><span class="s4">; </span><span class="s10">/* 흰색 배경 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">overflow:</span><span class="s1"> </span><span class="s9">hidden</span><span class="s1">;</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">/* 폰트 적용: 고운바탕 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s11">'Gowun Batang'</span><span class="s1">, </span><span class="s9">serif</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">cursor:</span><span class="s1"> </span><span class="s9">pointer</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">touch-action:</span><span class="s1"> </span><span class="s9">none</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 3D 무대 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.scene</span><span class="s1"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">relative</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100vw</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100vh</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">perspective:</span><span class="s1"> </span><span class="s8">2000px</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">align-items:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 텍스트 오버레이 (빨강) */</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.overlay-text</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">top:</span><span class="s4"> </span><span class="s8">40px</span><span class="s4">; </span><span class="s1">left:</span><span class="s4"> </span><span class="s8">40px</span><span class="s4">; </span><span class="s1">z-index:</span><span class="s4"> </span><span class="s8">100</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">color:</span><span class="s4"> </span><span class="s9">#ff0000</span><span class="s4">; </span><span class="s1">pointer-events:</span><span class="s4"> </span><span class="s9">none</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.overlay-text</span><span class="s4"> </span><span class="s1">h1</span><span class="s4"> {<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s8">1.7rem</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">margin:</span><span class="s1"> </span><span class="s8">0</span><span class="s1"> </span><span class="s8">0</span><span class="s1"> </span><span class="s8">20px</span><span class="s1"> </span><span class="s8">0</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">letter-spacing:</span><span class="s1"> </span><span class="s8">1px</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-weight:</span><span class="s1"> </span><span class="s9">normal</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s9">#ff0000</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.overlay-text</span><span class="s4"> </span><span class="s1">p</span><span class="s4">, </span><span class="s1">.overlay-text</span><span class="s4"> </span><span class="s1">li</span><span class="s4"> {<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s8">0.9rem</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">line-height:</span><span class="s1"> </span><span class="s8">1.6</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">max-width:</span><span class="s1"> </span><span class="s8">400px</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">opacity:</span><span class="s1"> </span><span class="s8">1</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">list-style:</span><span class="s1"> </span><span class="s9">none</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">margin-bottom:</span><span class="s1"> </span><span class="s8">10px</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s9">#ff0000</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.highlight</span><span class="s4"> { </span><span class="s1">font-weight:</span><span class="s4"> </span><span class="s9">normal</span><span class="s4">; </span><span class="s1">text-decoration:</span><span class="s4"> </span><span class="s9">none</span><span class="s4">; }</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 사용법 안내 스타일 */</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.usage-guide</span><span class="s4"> { </span><span class="s1">margin-top:</span><span class="s4"> </span><span class="s8">40px</span><span class="s4">; </span><span class="s1">opacity:</span><span class="s4"> </span><span class="s8">1</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.usage-title</span><span class="s4"> { </span><span class="s1">font-weight:</span><span class="s4"> </span><span class="s9">bold</span><span class="s4">; </span><span class="s1">font-size:</span><span class="s4"> </span><span class="s8">1rem</span><span class="s4">; </span><span class="s1">margin-bottom:</span><span class="s4"> </span><span class="s8">10px</span><span class="s4">; </span><span class="s1">display:</span><span class="s4"> </span><span class="s9">block</span><span class="s4">; </span><span class="s1">color:</span><span class="s4"> </span><span class="s9">#ff0000</span><span class="s4">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.usage-list</span><span class="s1"> { </span><span class="s2">padding:</span><span class="s1"> </span><span class="s8">0</span><span class="s1">; </span><span class="s2">margin:</span><span class="s1"> </span><span class="s8">0</span><span class="s1">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.usage-list</span><span class="s4"> </span><span class="s6">li</span><span class="s4"> { </span><span class="s1">margin-bottom:</span><span class="s4"> </span><span class="s8">8px</span><span class="s4">; </span><span class="s1">word-break:</span><span class="s4"> </span><span class="s9">keep-all</span><span class="s4">; </span><span class="s1">color:</span><span class="s4"> </span><span class="s9">#ff0000</span><span class="s4">; }</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 아이콘 범례 (빨강) */</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.icon-legend</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s9">flex-start</span><span class="s4">; </span><span class="s1">gap:</span><span class="s4"> </span><span class="s8">20px</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">max-width:</span><span class="s4"> </span><span class="s8">400px</span><span class="s4">; </span><span class="s1">margin-top:</span><span class="s4"> </span><span class="s8">30px</span><span class="s4">; </span><span class="s1">margin-bottom:</span><span class="s4"> </span><span class="s8">20px</span><span class="s4">; </span><span class="s1">pointer-events:</span><span class="s4"> </span><span class="s9">auto</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.legend-item</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">flex-direction:</span><span class="s4"> </span><span class="s9">column</span><span class="s4">; </span><span class="s1">align-items:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">font-size:</span><span class="s4"> </span><span class="s8">0.8rem</span><span class="s4">; </span><span class="s1">color:</span><span class="s4"> </span><span class="s9">#ff0000</span><span class="s4">; </span><span class="s1">opacity:</span><span class="s4"> </span><span class="s8">0.7</span><span class="s4">; </span><span class="s1">cursor:</span><span class="s4"> </span><span class="s9">pointer</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">transition:</span><span class="s1"> </span><span class="s9">transform</span><span class="s1"> </span><span class="s8">0.2s</span><span class="s1">, </span><span class="s9">opacity</span><span class="s1"> </span><span class="s8">0.2s</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.legend-item:hover</span><span class="s4">, </span><span class="s1">.legend-item.active</span><span class="s4"> { </span><span class="s2">opacity:</span><span class="s4"> </span><span class="s8">1</span><span class="s4">; </span><span class="s2">transform:</span><span class="s4"> </span><span class="s9">scale(</span><span class="s8">1.1</span><span class="s9">)</span><span class="s4">; </span><span class="s2">font-weight:</span><span class="s4"> </span><span class="s9">normal</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.legend-icon</span><span class="s4"> { </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">30px</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">30px</span><span class="s4">; </span><span class="s1">margin-bottom:</span><span class="s4"> </span><span class="s8">5px</span><span class="s4">; }</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 카메라 피드 */</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.input_video</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">top:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">left:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">object-fit:</span><span class="s4"> </span><span class="s9">cover</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">opacity:</span><span class="s4"> </span><span class="s8">0.05</span><span class="s4">; </span><span class="s1">filter:</span><span class="s4"> </span><span class="s9">grayscale(</span><span class="s8">100%</span><span class="s9">)</span><span class="s4"> </span><span class="s9">contrast(</span><span class="s8">1.2</span><span class="s9">)</span><span class="s4">; </span><span class="s1">z-index:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">pointer-events:</span><span class="s4"> </span><span class="s9">none</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">transform:</span><span class="s1"> </span><span class="s9">scaleX(</span><span class="s8">-1</span><span class="s9">)</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.loading-msg</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">bottom:</span><span class="s4"> </span><span class="s8">20px</span><span class="s4">; </span><span class="s1">right:</span><span class="s4"> </span><span class="s8">20px</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">color:</span><span class="s4"> </span><span class="s9">#ff0000</span><span class="s4">; </span><span class="s1">font-size:</span><span class="s4"> </span><span class="s8">0.8rem</span><span class="s4">; </span><span class="s1">opacity:</span><span class="s4"> </span><span class="s8">0.7</span><span class="s4">;</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">animation:</span><span class="s4"> </span><span class="s1">blink</span><span class="s4"> </span><span class="s8">1s</span><span class="s4"> </span><span class="s1">infinite</span><span class="s4">; </span><span class="s2">font-family:</span><span class="s4"> </span><span class="s1">sans-serif</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s12">@keyframes</span><span class="s1"> </span><span class="s9">blink</span><span class="s1"> { </span><span class="s8">50%</span><span class="s1"> { </span><span class="s2">opacity:</span><span class="s1"> </span><span class="s8">0.3</span><span class="s1">; } }</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 카드 스타일 */</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.world</span><span class="s4"> { </span><span class="s1">position:</span><span class="s4"> </span><span class="s9">relative</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">transform-style:</span><span class="s4"> </span><span class="s9">preserve-3d</span><span class="s4">; </span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">align-items:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">z-index:</span><span class="s4"> </span><span class="s8">10</span><span class="s4">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.card</span><span class="s1"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">border-radius:</span><span class="s4"> </span><span class="s8">3px</span><span class="s4">;</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">transform:</span><span class="s4"> </span><span class="s1">translate3d(</span><span class="s8">0</span><span class="s4">, </span><span class="s8">0</span><span class="s4">, </span><span class="s8">0</span><span class="s1">)</span><span class="s4"> </span><span class="s1">rotate(</span><span class="s8">0deg</span><span class="s1">)</span><span class="s4">;</span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">transition:</span><span class="s4"> </span><span class="s1">transform</span><span class="s4"> </span><span class="s8">1.8s</span><span class="s4"> </span><span class="s1">cubic-bezier(</span><span class="s8">0.2</span><span class="s4">, </span><span class="s8">0.8</span><span class="s4">, </span><span class="s8">0.2</span><span class="s4">, </span><span class="s8">1</span><span class="s1">)</span><span class="s4">, </span><span class="s1">width</span><span class="s4"> </span><span class="s8">0.3s</span><span class="s4">, </span><span class="s1">height</span><span class="s4"> </span><span class="s8">0.3s</span><span class="s4">, </span><span class="s1">opacity</span><span class="s4"> </span><span class="s8">0.5s</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">transform-style:</span><span class="s4"> </span><span class="s9">preserve-3d</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">box-shadow:</span><span class="s1"> </span><span class="s8">0</span><span class="s1"> </span><span class="s8">5px</span><span class="s1"> </span><span class="s8">20px</span><span class="s1"> </span><span class="s9">rgba(</span><span class="s8">0</span><span class="s1">,</span><span class="s8">0</span><span class="s1">,</span><span class="s8">0</span><span class="s1">,</span><span class="s8">0.1</span><span class="s9">)</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.card.hidden</span><span class="s4"> { </span><span class="s1">opacity:</span><span class="s4"> </span><span class="s8">0</span><span class="s4"> </span><span class="s12">!important</span><span class="s4">; </span><span class="s1">pointer-events:</span><span class="s4"> </span><span class="s9">none</span><span class="s4">; </span><span class="s1">transform:</span><span class="s4"> </span><span class="s9">scale(</span><span class="s8">0</span><span class="s9">)</span><span class="s4"> </span><span class="s12">!important</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.card-inner</span><span class="s4"> { </span><span class="s1">position:</span><span class="s4"> </span><span class="s9">relative</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">text-align:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">transition:</span><span class="s4"> </span><span class="s9">transform</span><span class="s4"> </span><span class="s8">0.6s</span><span class="s4">; </span><span class="s1">transform-style:</span><span class="s4"> </span><span class="s9">preserve-3d</span><span class="s4">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.card.flipped</span><span class="s4"> </span><span class="s1">.card-inner</span><span class="s4"> { </span><span class="s2">transform:</span><span class="s4"> </span><span class="s9">rotateY(</span><span class="s8">180deg</span><span class="s9">)</span><span class="s4">; }</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.card.revealed</span><span class="s4"> </span><span class="s1">.card-front</span><span class="s4"> {<span class="Apple-converted-space"> </span></span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-size:</span><span class="s4"> </span><span class="s9">contain</span><span class="s4">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p8"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s2">filter:</span><span class="s4"> </span><span class="s1">grayscale(</span><span class="s8">0%</span><span class="s1">)</span><span class="s4"> </span><span class="s1">contrast(</span><span class="s8">1</span><span class="s1">)</span><span class="s4">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.card-front</span><span class="s4">, </span><span class="s6">.card-back</span><span class="s4"> { </span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">backface-visibility:</span><span class="s4"> </span><span class="s9">hidden</span><span class="s4">; </span><span class="s1">border-radius:</span><span class="s4"> </span><span class="s8">3px</span><span class="s4">; }</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s6">.card-front</span><span class="s4"> { </span><span class="s1">background-color:</span><span class="s4"> </span><span class="s9">#1a1a1a</span><span class="s4">; </span><span class="s1">background-size:</span><span class="s4"> </span><span class="s9">contain</span><span class="s4">; </span><span class="s1">background-repeat:</span><span class="s4"> </span><span class="s9">no-repeat</span><span class="s4">; </span><span class="s1">background-position:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">filter:</span><span class="s4"> </span><span class="s9">grayscale(</span><span class="s8">100%</span><span class="s9">)</span><span class="s4"> </span><span class="s9">contrast(</span><span class="s8">1.1</span><span class="s9">)</span><span class="s4">; </span><span class="s1">transition:</span><span class="s4"> </span><span class="s9">filter</span><span class="s4"> </span><span class="s8">0.5s</span><span class="s4">; }</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 카드 뒷면 스타일 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s6">.card-back</span><span class="s1"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-color:</span><span class="s4"> </span><span class="s9">#f5f5f5</span><span class="s4">; </span><span class="s10">/* 연회색 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">transform:</span><span class="s1"> </span><span class="s9">rotateY(</span><span class="s8">180deg</span><span class="s9">)</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">border:</span><span class="s1"> </span><span class="s8">1px</span><span class="s1"> </span><span class="s9">solid</span><span class="s1"> </span><span class="s9">#e0e0e0</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">align-items:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">box-sizing:</span><span class="s1"> </span><span class="s9">border-box</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s9">#ff0000</span><span class="s1">; </span><span class="s10">/* 글자 빨강 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">overflow:</span><span class="s1"> </span><span class="s9">hidden</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s9">relative</span><span class="s1">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">background-size:</span><span class="s1"> </span><span class="s8">40px</span><span class="s1"> </span><span class="s8">40px</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-repeat:</span><span class="s4"> </span><span class="s9">no-repeat</span><span class="s4">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">background-position:</span><span class="s4"> </span><span class="s9">center</span><span class="s4"> </span><span class="s9">center</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">/* 설명 텍스트 (7pt 고정) */</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.description-text</span><span class="s4"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">position:</span><span class="s1"> </span><span class="s9">absolute</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">top:</span><span class="s1"> </span><span class="s8">0</span><span class="s1">; </span><span class="s2">left:</span><span class="s1"> </span><span class="s8">0</span><span class="s1">; </span><span class="s2">width:</span><span class="s1"> </span><span class="s8">100%</span><span class="s1">; </span><span class="s2">height:</span><span class="s1"> </span><span class="s8">100%</span><span class="s1">;</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">display:</span><span class="s4"> </span><span class="s9">flex</span><span class="s4">; </span><span class="s1">justify-content:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">; </span><span class="s1">align-items:</span><span class="s4"> </span><span class="s9">center</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">padding:</span><span class="s1"> </span><span class="s8">10px</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">box-sizing:</span><span class="s1"> </span><span class="s9">border-box</span><span class="s1">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">text-align:</span><span class="s1"> </span><span class="s9">center</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-size:</span><span class="s1"> </span><span class="s8">7pt</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">line-height:</span><span class="s1"> </span><span class="s8">1.5</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">word-break:</span><span class="s1"> </span><span class="s9">keep-all</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">color:</span><span class="s1"> </span><span class="s9">#ff0000</span><span class="s1">; </span><span class="s10">/* 빨강 */</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">z-index:</span><span class="s1"> </span><span class="s8">1</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s2">font-family:</span><span class="s1"> </span><span class="s11">'Gowun Batang'</span><span class="s1">, </span><span class="s9">serif</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s1">.scratch-canvas</span><span class="s4"> {</span></p>
-<p class="p3"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s1">position:</span><span class="s4"> </span><span class="s9">absolute</span><span class="s4">; </span><span class="s1">top:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">left:</span><span class="s4"> </span><span class="s8">0</span><span class="s4">; </span><span class="s1">width:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">height:</span><span class="s4"> </span><span class="s8">100%</span><span class="s4">; </span><span class="s1">z-index:</span><span class="s4"> </span><span class="s8">2</span><span class="s4">; </span><span class="s1">cursor:</span><span class="s4"> </span><span class="s9">crosshair</span><span class="s4">; </span><span class="s1">touch-action:</span><span class="s4"> </span><span class="s9">none</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">video</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"input_video"</span><span class="s3">&gt;&lt;/</span><span class="s6">video</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"loading-msg"</span><span class="s1"> </span><span class="s2">id</span><span class="s3">=</span><span class="s5">"cameraStatus"</span><span class="s3">&gt;</span><span class="s1">Initializing Camera... (Allow permissions)</span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"overlay-text"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">h1</span><span class="s3">&gt;</span><span class="s1">RETOUCHED</span><span class="s3">&lt;/</span><span class="s6">h1</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>'포토샵에 의한 죽음'. 디지털 픽셀이 발명되기 훨씬 전부터, 권력은 이미 </span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"highlight"</span><span class="s3">&gt;</span><span class="s1">'포토샵'</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">을 하고 있었다.<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>스탈린의 에어브러시, 마오쩌둥의 덧칠, 그리고 누군가의 얼굴을 긁어낸 날카로운 칼날.<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>기록에서 지워진다는 것은 곧 존재한 적 없는 사람이 된다는 것.<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>이것은 단순한 이미지의 수정이 아니다. 기억에 대한 사형 선고다.</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">p</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"icon-legend"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-item"</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"window.filterCards('group4', this)"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">img</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2015.svg"</span><span class="s4"> </span><span class="s2">alt</span><span class="s3">=</span><span class="s1">"삭제"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-icon"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">삭제</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-item"</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"window.filterCards('group3', this)"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">img</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2013.svg"</span><span class="s4"> </span><span class="s2">alt</span><span class="s3">=</span><span class="s1">"잔여"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-icon"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">잔여</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-item"</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"window.filterCards('group2', this)"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">img</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2014.svg"</span><span class="s4"> </span><span class="s2">alt</span><span class="s3">=</span><span class="s1">"합성"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-icon"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">합성</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-item"</span><span class="s4"> </span><span class="s2">onclick</span><span class="s3">=</span><span class="s1">"window.filterCards('group1', this)"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">img</span><span class="s4"> </span><span class="s2">src</span><span class="s3">=</span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2016.svg"</span><span class="s4"> </span><span class="s2">alt</span><span class="s3">=</span><span class="s1">"왜곡"</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"legend-icon"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s3">&gt;</span><span class="s1">왜곡</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"usage-guide"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">span</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"usage-title"</span><span class="s3">&gt;</span><span class="s1">How to use</span><span class="s3">&lt;/</span><span class="s6">span</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s6">ul</span><span class="s1"> </span><span class="s2">class</span><span class="s3">=</span><span class="s5">"usage-list"</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">1. 주먹을 쥐었다 펼치면 카드들이 흩어진다.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">2. 흩어진 카드를 클릭하여 뒤집고, 마우스 드래그로 뒷면을 지우면 설명이 나타난다.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s6">li</span><span class="s3">&gt;</span><span class="s1">3. 다시 한 번 클릭하면 지워지거나 대체된 이미지들이 나타난다.</span><span class="s3">&lt;/</span><span class="s6">li</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s6">ul</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"scene"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s4"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s6">div</span><span class="s4"> </span><span class="s2">class</span><span class="s3">=</span><span class="s1">"world"</span><span class="s4"> </span><span class="s2">id</span><span class="s3">=</span><span class="s1">"world"</span><span class="s3">&gt;&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s6">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener(</span><span class="s11">'DOMContentLoaded'</span><span class="s1">, () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s12">try</span><span class="s1"> {</span></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// --- 데이터 및 URL ---</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> individualDescriptions = [</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"1994년, 타임 매거진은 O.J 심슨의 머그샷을 표지에 실으면서 원본보다 피부색을 훨씬 검고 어둡게 만들었다. 이는 흑인에 대한 편견을 자극하고 그를 더욱 위협적인 범죄자로 보이게 하려는 의도적인 왜곡이었다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"처칠의 건강한 이미지를 만들기 위해 입에 물고 있던 담배를 지워버렸다. 입 모양이 어색해지는 경우가 많다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"히틀러는 안경 쓴 모습을 나약하다고 생각해서 사진에서 안경을 지우거나, 안경 쓴 사진 배포를 금지했다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"1869년 링컨의 부인 메리 토드 링컨의 초상화이다. 그녀의 뒤에 암살당한 남편 에이브러햄 링컨의 유령이 두 손을 얹고 서있다. 사진가 윌리엄 멈러가 '이중 노출' 기법을 이용해 링컨의 옛날 사진을 흐릿하게 합성해 넣은 사기극이다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"소련군이 베를린 의사당에 깃발을 꽂는 사진이다. 더 극적인 연출을 위해 배경에 검은 연기를 그려 넣고 구도를 수정했다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"링컨의 얼굴과 노예제 옹호자 존 칼훈의 몸과 다른 배경을 합친 사진이다. 링컨의 가장 유명한 전신 사진이 사실은 가짜였다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"김정일이 군부대와 함께 찍은 단체 사진이다. 행렬에서 벗어나 있는 사람들의 흔적을 지웠다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"무솔리니가 영웅처럼 보이기 위해 말 고삐를 잡아주던 마부를 지웠다. 그 결과 말 고삐가 공중에 둥둥 떠있다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"고트발트 옆에 있던 클레멘티스는 지워졌지만, 그가 고트발트 머리에 씌워준 털모자는 그대로 남았다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"유리 가가린과 함께 찍힌 소련 우주비행사 팀 '소치 6인' 사진에서, 그리고리 낼류보프라는 비행사가 제명된 후 단체 사진에서 삭제되었다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"레닌의 연설 단상 옆에 서 있었으나, 스탈린 집권 후 나무 계단으로 덮여 삭제되었다."</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"스탈린과 걷던 예조프가 처형 후 물결로 대체되었다."</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>];</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> manipulatedImageUrls = [</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%201.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%202.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%203.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%204.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%205.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%206.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%207.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%208.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%209.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2010.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2011.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2012.svg"</span><span class="s4"><span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>];</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> originalImageUrls = [</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2020.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2021.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2022.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2028.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2027.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2026.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2018.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2019.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2017.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2023.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2024.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span></span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2025.svg"</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>];</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> backIcons = {</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span>group1: </span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2016.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span>group2: </span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2014.svg"</span><span class="s4">,</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span>group3: </span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2013.svg"</span><span class="s4">,<span class="Apple-converted-space"> </span></span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span>group4: </span><span class="s1">"https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2015.svg"</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>};</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> world = document.getElementById(</span><span class="s11">'world'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">const</span><span class="s1"> cards = [];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">let</span><span class="s1"> isScattered = </span><span class="s12">false</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">let</span><span class="s1"> activeGroup = </span><span class="s12">null</span><span class="s1">;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// --- Helper Functions ---</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">function</span><span class="s1"> setupScratchCanvas(canvas, iconUrl, width, height) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> ctx = canvas.getContext(</span><span class="s11">'2d'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.width = width; canvas.height = height;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.fillStyle = </span><span class="s11">'#f5f5f5'</span><span class="s1">; </span><span class="s10">// 연회색</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>ctx.fillRect(</span><span class="s13">0</span><span class="s1">, </span><span class="s13">0</span><span class="s1">, width, height);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> iconImg = </span><span class="s12">new</span><span class="s1"> </span><span class="s14">Image</span><span class="s1">();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>iconImg.crossOrigin = </span><span class="s11">"Anonymous"</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>iconImg.src = iconUrl;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>iconImg.onload = () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> maxIconSize = </span><span class="s13">40</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">let</span><span class="s1"> drawWidth = iconImg.width;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">let</span><span class="s1"> drawHeight = iconImg.height;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> scale = </span><span class="s14">Math</span><span class="s1">.min(maxIconSize / drawWidth, maxIconSize / drawHeight);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>drawWidth *= scale; drawHeight *= scale;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> x = (width - drawWidth) / </span><span class="s13">2</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> y = (height - drawHeight) / </span><span class="s13">2</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>ctx.drawImage(iconImg, x, y, drawWidth, drawHeight);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>};</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">let</span><span class="s1"> isDrawing = </span><span class="s12">false</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> startDrawing = () =&gt; isDrawing = </span><span class="s12">true</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> stopDrawing = () =&gt; isDrawing = </span><span class="s12">false</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> scratch = (e) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (!isDrawing) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> rect = canvas.getBoundingClientRect();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">let</span><span class="s1"> clientX, clientY;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (e.touches) { clientX = e.touches[</span><span class="s13">0</span><span class="s1">].clientX; clientY = e.touches[</span><span class="s13">0</span><span class="s1">].clientY; }<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">else</span><span class="s1"> { clientX = e.clientX; clientY = e.clientY; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> x = clientX - rect.left;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> y = clientY - rect.top;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>ctx.globalCompositeOperation = </span><span class="s11">'destination-out'</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>ctx.beginPath();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>ctx.arc(x, y, </span><span class="s13">20</span><span class="s1">, </span><span class="s13">0</span><span class="s1">, </span><span class="s14">Math</span><span class="s1">.</span><span class="s14">PI</span><span class="s1"> * </span><span class="s13">2</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>ctx.fill();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>};</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'mousedown'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); startDrawing(); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'mousemove'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); scratch(e); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'mouseup'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); stopDrawing(); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'mouseleave'</span><span class="s1">, stopDrawing);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'touchstart'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); startDrawing(); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'touchmove'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); scratch(e); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.addEventListener(</span><span class="s11">'touchend'</span><span class="s1">, (e) =&gt; { e.stopPropagation(); stopDrawing(); });</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// --- Cards Creation ---</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>manipulatedImageUrls.forEach((url, index) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> img = </span><span class="s12">new</span><span class="s1"> </span><span class="s14">Image</span><span class="s1">();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>img.src = url;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> card = document.createElement(</span><span class="s11">'div'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.classList.add(</span><span class="s11">'card'</span><span class="s1">);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">let</span><span class="s1"> group = </span><span class="s11">""</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">let</span><span class="s1"> backIconUrl = </span><span class="s11">""</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (index &gt;= </span><span class="s13">0</span><span class="s1"> &amp;&amp; index &lt;= </span><span class="s13">2</span><span class="s1">) { group = </span><span class="s11">"group1"</span><span class="s1">; backIconUrl = backIcons.group1; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">else</span><span class="s1"> </span><span class="s12">if</span><span class="s1"> (index &gt;= </span><span class="s13">3</span><span class="s1"> &amp;&amp; index &lt;= </span><span class="s13">5</span><span class="s1">) { group = </span><span class="s11">"group2"</span><span class="s1">; backIconUrl = backIcons.group2; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">else</span><span class="s1"> </span><span class="s12">if</span><span class="s1"> (index &gt;= </span><span class="s13">6</span><span class="s1"> &amp;&amp; index &lt;= </span><span class="s13">8</span><span class="s1">) { group = </span><span class="s11">"group3"</span><span class="s1">; backIconUrl = backIcons.group3; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">else</span><span class="s1"> </span><span class="s12">if</span><span class="s1"> (index &gt;= </span><span class="s13">9</span><span class="s1"> &amp;&amp; index &lt;= </span><span class="s13">11</span><span class="s1">) { group = </span><span class="s11">"group4"</span><span class="s1">; backIconUrl = backIcons.group4; }</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.dataset.group = group;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.dataset.index = index;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> cardInner = document.createElement(</span><span class="s11">'div'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cardInner.classList.add(</span><span class="s11">'card-inner'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> front = document.createElement(</span><span class="s11">'div'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>front.classList.add(</span><span class="s11">'card-front'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>front.style.backgroundImage = </span><span class="s11">`url('</span><span class="s1">${url}</span><span class="s11">')`</span><span class="s1">;<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> back = document.createElement(</span><span class="s11">'div'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>back.classList.add(</span><span class="s11">'card-back'</span><span class="s1">);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> descContainer = document.createElement(</span><span class="s11">'div'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>descContainer.classList.add(</span><span class="s11">'description-text'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>descContainer.innerText = individualDescriptions[index];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>back.appendChild(descContainer);</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> canvas = document.createElement(</span><span class="s11">'canvas'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>canvas.classList.add(</span><span class="s11">'scratch-canvas'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>back.appendChild(canvas);</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cardInner.appendChild(front);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cardInner.appendChild(back);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.appendChild(cardInner);</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>img.onload = () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> aspectRatio = img.naturalWidth / img.naturalHeight;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">let</span><span class="s1"> width, height;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (aspectRatio &gt; </span><span class="s13">1</span><span class="s1">) { width = </span><span class="s13">170</span><span class="s1">; height = width / aspectRatio; }<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">else</span><span class="s1"> { height = </span><span class="s13">204</span><span class="s1">; width = height * aspectRatio; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.style.width = </span><span class="s11">`</span><span class="s1">${width}</span><span class="s11">px`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.style.height = </span><span class="s11">`</span><span class="s1">${height}</span><span class="s11">px`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>setupScratchCanvas(canvas, backIconUrl, width, height);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>};</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.transform = </span><span class="s11">`translate3d(0,0,0) rotate(</span><span class="s1">${</span><span class="s14">Math</span><span class="s1">.random() * </span><span class="s13">4</span><span class="s1"> - </span><span class="s13">2</span><span class="s1">}</span><span class="s11">deg)`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.zIndex = manipulatedImageUrls.length - index;</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>card.addEventListener(</span><span class="s11">'click'</span><span class="s1">, (e) =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (!isScattered) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (e.target.classList.contains(</span><span class="s11">'scratch-canvas'</span><span class="s1">)) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> wasFlipped = card.classList.contains(</span><span class="s11">'flipped'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> wasRevealed = card.classList.contains(</span><span class="s11">'revealed'</span><span class="s1">);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                        </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (!wasFlipped &amp;&amp; !wasRevealed) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>card.classList.add(</span><span class="s11">'flipped'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>} </span><span class="s12">else</span><span class="s1"> </span><span class="s12">if</span><span class="s1"> (wasFlipped &amp;&amp; !wasRevealed) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> idx = parseInt(card.dataset.index);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> frontElement = card.querySelector(</span><span class="s11">'.card-front'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>frontElement.style.backgroundImage = </span><span class="s11">`url('</span><span class="s1">${originalImageUrls[idx]}</span><span class="s11">')`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>card.classList.add(</span><span class="s11">'revealed'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>card.classList.remove(</span><span class="s11">'flipped'</span><span class="s1">);<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>} </span><span class="s12">else</span><span class="s1"> </span><span class="s12">if</span><span class="s1"> (wasRevealed) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> idx = parseInt(card.dataset.index);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> frontElement = card.querySelector(</span><span class="s11">'.card-front'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>frontElement.style.backgroundImage = </span><span class="s11">`url('</span><span class="s1">${manipulatedImageUrls[idx]}</span><span class="s11">')`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>card.classList.remove(</span><span class="s11">'revealed'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>card.classList.add(</span><span class="s11">'flipped'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>world.appendChild(card);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.push(card);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// --- Global Functions for HTML Access ---</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>window.filterCards = </span><span class="s12">function</span><span class="s1">(groupName, element) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (event) event.stopPropagation();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (!isScattered) scatterCards();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (activeGroup === groupName) { resetFilter(); </span><span class="s12">return</span><span class="s1">; }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>activeGroup = groupName;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>document.querySelectorAll(</span><span class="s11">'.legend-item'</span><span class="s1">).forEach(item =&gt; item.classList.remove(</span><span class="s11">'active'</span><span class="s1">));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1">(element) element.classList.add(</span><span class="s11">'active'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.forEach(card =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (card.dataset.group === groupName) { card.classList.remove(</span><span class="s11">'hidden'</span><span class="s1">); }<span class="Apple-converted-space"> </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">else</span><span class="s1"> { card.classList.add(</span><span class="s11">'hidden'</span><span class="s1">); card.classList.remove(</span><span class="s11">'flipped'</span><span class="s1">); card.classList.remove(</span><span class="s11">'revealed'</span><span class="s1">); }</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>};</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">function</span><span class="s1"> resetFilter() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>activeGroup = </span><span class="s12">null</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>document.querySelectorAll(</span><span class="s11">'.legend-item'</span><span class="s1">).forEach(item =&gt; item.classList.remove(</span><span class="s11">'active'</span><span class="s1">));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.forEach(card =&gt; card.classList.remove(</span><span class="s11">'hidden'</span><span class="s1">));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">function</span><span class="s1"> scatterCards() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1">(isScattered) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>isScattered = </span><span class="s12">true</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.forEach(card =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> x = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * window.innerWidth * </span><span class="s13">0.7</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> y = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * window.innerHeight * </span><span class="s13">0.7</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> z = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * </span><span class="s13">800</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> rx = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * </span><span class="s13">60</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> ry = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * </span><span class="s13">60</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> rz = (</span><span class="s14">Math</span><span class="s1">.random() - </span><span class="s13">0.5</span><span class="s1">) * </span><span class="s13">30</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.style.transform = </span><span class="s11">`translate3d(</span><span class="s1">${x}</span><span class="s11">px, </span><span class="s1">${y}</span><span class="s11">px, </span><span class="s1">${z}</span><span class="s11">px) rotateX(</span><span class="s1">${rx}</span><span class="s11">deg) rotateY(</span><span class="s1">${ry}</span><span class="s11">deg) rotateZ(</span><span class="s1">${rz}</span><span class="s11">deg)`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>document.querySelector(</span><span class="s11">'.overlay-text'</span><span class="s1">).style.opacity = </span><span class="s13">0.5</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">function</span><span class="s1"> resetCards() {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>isScattered = </span><span class="s12">false</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>resetFilter();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>cards.forEach(card =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.style.transform = </span><span class="s11">`translate3d(0,0,0) rotate(</span><span class="s1">${</span><span class="s14">Math</span><span class="s1">.random() * </span><span class="s13">4</span><span class="s1"> - </span><span class="s13">2</span><span class="s1">}</span><span class="s11">deg)`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.classList.remove(</span><span class="s11">'flipped'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>card.classList.remove(</span><span class="s11">'revealed'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> frontElement = card.querySelector(</span><span class="s11">'.card-front'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">const</span><span class="s1"> idx = parseInt(card.dataset.index);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>frontElement.style.backgroundImage = </span><span class="s11">`url('</span><span class="s1">${manipulatedImageUrls[idx]}</span><span class="s11">')`</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>document.querySelector(</span><span class="s11">'.overlay-text'</span><span class="s1">).style.opacity = </span><span class="s13">1</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>document.addEventListener(</span><span class="s11">'click'</span><span class="s1">, () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (isScattered) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>scatterCards();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>document.addEventListener(</span><span class="s11">'dblclick'</span><span class="s1">, () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">if</span><span class="s1"> (!isScattered) </span><span class="s12">return</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>resetCards();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p7"><span class="s4"><span class="Apple-converted-space">                </span></span><span class="s1">// --- MediaPipe Initialization ---</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s12">if</span><span class="s1"> (</span><span class="s12">typeof</span><span class="s1"> </span><span class="s14">Hands</span><span class="s1"> !== </span><span class="s11">'undefined'</span><span class="s1"> &amp;&amp; </span><span class="s12">typeof</span><span class="s1"> </span><span class="s14">Camera</span><span class="s1"> !== </span><span class="s11">'undefined'</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> videoElement = document.querySelector(</span><span class="s11">'.input_video'</span><span class="s1">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> cameraStatus = document.getElementById(</span><span class="s11">'cameraStatus'</span><span class="s1">);</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">function</span><span class="s1"> onResults(results) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>cameraStatus.innerText = </span><span class="s11">"Camera Active - Hand Control Ready"</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s12">if</span><span class="s1"> (results.multiHandLandmarks &amp;&amp; results.multiHandLandmarks.length &gt; </span><span class="s13">0</span><span class="s1">) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> landmarks = results.multiHandLandmarks[</span><span class="s13">0</span><span class="s1">];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> wrist = landmarks[</span><span class="s13">0</span><span class="s1">];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> middleTip = landmarks[</span><span class="s13">12</span><span class="s1">];</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> distance = </span><span class="s14">Math</span><span class="s1">.sqrt(</span><span class="s14">Math</span><span class="s1">.pow(wrist.x - middleTip.x, </span><span class="s13">2</span><span class="s1">) + </span><span class="s14">Math</span><span class="s1">.pow(wrist.y - middleTip.y, </span><span class="s13">2</span><span class="s1">));</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">const</span><span class="s1"> threshold = </span><span class="s13">0.25</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">if</span><span class="s1"> (distance &gt; threshold) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s12">if</span><span class="s1"> (!isScattered) scatterCards();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>} </span><span class="s12">else</span><span class="s1"> {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s12">if</span><span class="s1"> (isScattered) resetCards();</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> hands = </span><span class="s12">new</span><span class="s1"> </span><span class="s14">Hands</span><span class="s1">({locateFile: (file) =&gt; {</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                        </span></span><span class="s12">return</span><span class="s4"> </span><span class="s1">`https://cdn.jsdelivr.net/npm/@mediapipe/hands/</span><span class="s4">${file}</span><span class="s1">`</span><span class="s4">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>}});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>hands.setOptions({</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>maxNumHands: </span><span class="s13">1</span><span class="s1">,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>modelComplexity: </span><span class="s13">1</span><span class="s1">,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>minDetectionConfidence: </span><span class="s13">0.5</span><span class="s1">,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>minTrackingConfidence: </span><span class="s13">0.5</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>hands.onResults(onResults);</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s12">const</span><span class="s1"> camera = </span><span class="s12">new</span><span class="s1"> </span><span class="s14">Camera</span><span class="s1">(videoElement, {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>onFrame: </span><span class="s12">async</span><span class="s1"> () =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s12">await</span><span class="s1"> hands.send({image: videoElement});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>},</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>width: </span><span class="s13">640</span><span class="s1">,</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>height: </span><span class="s13">480</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                    </span></span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>camera.start().</span><span class="s12">catch</span><span class="s1">(err =&gt; {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>console.error(</span><span class="s11">"Camera Error:"</span><span class="s1">, err);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                        </span>cameraStatus.innerText = </span><span class="s11">"Camera Error or Denied"</span><span class="s1">;</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>} </span><span class="s12">else</span><span class="s1"> {</span></p>
-<p class="p9"><span class="s4"><span class="Apple-converted-space">                    </span>console.log(</span><span class="s1">"MediaPipe not loaded in this environment."</span><span class="s4">);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p6"><span class="s7"></span><br></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>} </span><span class="s12">catch</span><span class="s1"> (error) {</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>alert(</span><span class="s11">"오류가 발생했습니다: "</span><span class="s1"> + error.message);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">                </span>console.error(error);</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p5"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p2"><span class="s4"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
+
+    <video class="input_video"></video>
+    <div class="loading-msg" id="cameraStatus">Initializing Camera... (Allow permissions)</div>
+
+    <div class="overlay-text">
+        <h1>RETOUCHED</h1>
+        <p>
+            '포토샵에 의한 죽음'. 디지털 픽셀이 발명되기 훨씬 전부터, 권력은 이미 '포토샵'을 하고 있었다. 
+            스탈린의 에어브러시, 마오쩌둥의 덧칠, 그리고 누군가의 얼굴을 긁어낸 날카로운 칼날. 
+            기록에서 지워진다는 것은 곧 존재한 적 없는 사람이 된다는 것. 
+            이것은 단순한 이미지의 수정이 아니다. 기억에 대한 사형 선고다.
+        </p>
+
+        <div class="icon-legend">
+            <div class="legend-item" onclick="window.filterCards('group4', this)">
+                <img src="https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2015.svg" alt="삭제" class="legend-icon">
+                <span>삭제</span>
+            </div>
+            <div class="legend-item" onclick="window.filterCards('group3', this)">
+                <img src="https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2013.svg" alt="잔여" class="legend-icon">
+                <span>잔여</span>
+            </div>
+            <div class="legend-item" onclick="window.filterCards('group2', this)">
+                <img src="https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2014.svg" alt="합성" class="legend-icon">
+                <span>합성</span>
+            </div>
+            <div class="legend-item" onclick="window.filterCards('group1', this)">
+                <img src="https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2016.svg" alt="왜곡" class="legend-icon">
+                <span>왜곡</span>
+            </div>
+        </div>
+        
+        <div class="usage-guide">
+            <span class="usage-title">How to use</span>
+            <ul class="usage-list">
+                <li>1. 주먹을 쥐었다 펼치면 카드들이 흩어진다.</li>
+                <li>2. 흩어진 카드를 클릭하여 뒤집고, 마우스 드래그로 뒷면을 지우면 설명이 나타난다.</li>
+                <li>3. 다시 한 번 클릭하면 지워지거나 대체된 이미지들이 나타난다.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="scene">
+        <div class="world" id="world"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const individualDescriptions = [
+                "1994년, 타임 매거진은 O.J 심슨의 머그샷을 표지에 실으면서 원본보다 피부색을 훨씬 검고 어둡게 만들었다. 이는 흑인에 대한 편견을 자극하고 그를 더욱 위협적인 범죄자로 보이게 하려는 의도적인 왜곡이었다.",
+                "처칠의 건강한 이미지를 만들기 위해 입에 물고 있던 담배를 지워버렸다. 입 모양이 어색해지는 경우가 많다.",
+                "히틀러는 안경 쓴 모습을 나약하다고 생각해서 사진에서 안경을 지우거나, 안경 쓴 사진 배포를 금지했다.",
+                "1869년 링컨의 부인 메리 토드 링컨의 초상화이다. 그녀의 뒤에 암살당한 남편 에이브러햄 링컨의 유령이 두 손을 얹고 서있다. 사진가 윌리엄 멈러가 '이중 노출' 기법을 이용해 링컨의 옛날 사진을 흐릿하게 합성해 넣은 사기극이다.",
+                "소련군이 베를린 의사당에 깃발을 꽂는 사진이다. 더 극적인 연출을 위해 배경에 검은 연기를 그려 넣고 구도를 수정했다.",
+                "링컨의 얼굴과 노예제 옹호자 존 칼훈의 몸과 다른 배경을 합친 사진이다. 링컨의 가장 유명한 전신 사진이 사실은 가짜였다.",
+                "김정일이 군부대와 함께 찍은 단체 사진이다. 행렬에서 벗어나 있는 사람들의 흔적을 지웠다.",
+                "무솔리니가 영웅처럼 보이기 위해 말 고삐를 잡아주던 마부를 지웠다. 그 결과 말 고삐가 공중에 둥둥 떠있다.",
+                "고트발트 옆에 있던 클레멘티스는 지워졌지만, 그가 고트발트 머리에 씌워준 털모자는 그대로 남았다.",
+                "유리 가가린과 함께 찍힌 소련 우주비행사 팀 '소치 6인' 사진에서, 그리고리 낼류보프라는 비행사가 제명된 후 단체 사진에서 삭제되었다.",
+                "레닌의 연설 단상 옆에 서 있었으나, 스탈린 집권 후 나무 계단으로 덮여 삭제되었다.",
+                "스탈린과 걷던 예조프가 처형 후 물결로 대체되었다."
+            ];
+
+            const manipulatedImageUrls = [
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%201.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%202.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%203.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%204.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%205.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%206.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%207.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%208.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%209.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2010.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2011.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/20d2f43916559a7ac2369f0724fba32a2b5420e0/Asset%2012.svg" 
+            ];
+            
+            const originalImageUrls = [
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2020.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2021.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2022.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2028.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2027.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2026.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2018.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2019.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2017.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2023.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2024.svg",
+                "https://raw.githubusercontent.com/ieunseo938/image/5fc79c16eba87e4aebf01642b6c4a2c6c86852a9/Asset%2025.svg"
+            ];
+
+            const backIcons = {
+                group1: "https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2016.svg",
+                group2: "https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2014.svg",
+                group3: "https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2013.svg", 
+                group4: "https://raw.githubusercontent.com/ieunseo938/image/34a3561312b38d8b3d3bd83b6f6798e2c6296cfc/Asset%2015.svg"
+            };
+
+            const world = document.getElementById('world');
+            const cards = [];
+            let isScattered = false;
+            let activeGroup = null;
+
+            function setupScratchCanvas(canvas, iconUrl, width, height) {
+                const ctx = canvas.getContext('2d');
+                canvas.width = width; canvas.height = height;
+                ctx.fillStyle = '#f5f5f5';
+                ctx.fillRect(0, 0, width, height);
+                
+                const iconImg = new Image();
+                iconImg.crossOrigin = "Anonymous";
+                iconImg.src = iconUrl;
+                iconImg.onload = () => {
+                    const maxIconSize = 40;
+                    let drawWidth = iconImg.width;
+                    let drawHeight = iconImg.height;
+                    const scale = Math.min(maxIconSize / drawWidth, maxIconSize / drawHeight);
+                    drawWidth *= scale; drawHeight *= scale;
+                    const x = (width - drawWidth) / 2;
+                    const y = (height - drawHeight) / 2;
+                    ctx.drawImage(iconImg, x, y, drawWidth, drawHeight);
+                };
+                
+                let isDrawing = false;
+                const startDrawing = () => isDrawing = true;
+                const stopDrawing = () => isDrawing = false;
+                const scratch = (e) => {
+                    if (!isDrawing) return;
+                    const rect = canvas.getBoundingClientRect();
+                    let clientX, clientY;
+                    if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } 
+                    else { clientX = e.clientX; clientY = e.clientY; }
+                    const x = clientX - rect.left;
+                    const y = clientY - rect.top;
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                };
+                canvas.addEventListener('mousedown', (e) => { e.stopPropagation(); startDrawing(); });
+                canvas.addEventListener('mousemove', (e) => { e.stopPropagation(); scratch(e); });
+                canvas.addEventListener('mouseup', (e) => { e.stopPropagation(); stopDrawing(); });
+                canvas.addEventListener('mouseleave', stopDrawing);
+                canvas.addEventListener('touchstart', (e) => { e.stopPropagation(); startDrawing(); });
+                canvas.addEventListener('touchmove', (e) => { e.stopPropagation(); scratch(e); });
+                canvas.addEventListener('touchend', (e) => { e.stopPropagation(); stopDrawing(); });
+            }
+
+            manipulatedImageUrls.forEach((url, index) => {
+                const img = new Image();
+                img.src = url;
+                const card = document.createElement('div');
+                card.classList.add('card');
+                
+                let group = "";
+                let backIconUrl = "";
+                if (index >= 0 && index <= 2) { group = "group1"; backIconUrl = backIcons.group1; }
+                else if (index >= 3 && index <= 5) { group = "group2"; backIconUrl = backIcons.group2; }
+                else if (index >= 6 && index <= 8) { group = "group3"; backIconUrl = backIcons.group3; }
+                else if (index >= 9 && index <= 11) { group = "group4"; backIconUrl = backIcons.group4; }
+                
+                card.dataset.group = group;
+                card.dataset.index = index;
+
+                const cardInner = document.createElement('div');
+                cardInner.classList.add('card-inner');
+                const front = document.createElement('div');
+                front.classList.add('card-front');
+                front.style.backgroundImage = `url('${url}')`; 
+                const back = document.createElement('div');
+                back.classList.add('card-back');
+                
+                const descContainer = document.createElement('div');
+                descContainer.classList.add('description-text');
+                descContainer.innerText = individualDescriptions[index];
+                back.appendChild(descContainer);
+
+                const canvas = document.createElement('canvas');
+                canvas.classList.add('scratch-canvas');
+                back.appendChild(canvas);
+
+                cardInner.appendChild(front);
+                cardInner.appendChild(back);
+                card.appendChild(cardInner);
+
+                img.onload = () => {
+                    const aspectRatio = img.naturalWidth / img.naturalHeight;
+                    let width, height;
+                    if (aspectRatio > 1) { width = 170; height = width / aspectRatio; } 
+                    else { height = 204; width = height * aspectRatio; }
+                    card.style.width = `${width}px`;
+                    card.style.height = `${height}px`;
+                    setupScratchCanvas(canvas, backIconUrl, width, height);
+                };
+
+                // 초기 랜덤 겹침 (정중앙 기준)
+                card.style.transform = `translate3d(0,0,0) rotate(${Math.random() * 4 - 2}deg)`;
+                card.style.zIndex = manipulatedImageUrls.length - index;
+
+                card.addEventListener('click', (e) => {
+                    if (!isScattered) return;
+                    if (e.target.classList.contains('scratch-canvas')) return;
+                    
+                    const wasFlipped = card.classList.contains('flipped');
+                    const wasRevealed = card.classList.contains('revealed');
+                    
+                    if (!wasFlipped && !wasRevealed) {
+                        card.classList.add('flipped');
+                    } else if (wasFlipped && !wasRevealed) {
+                        const idx = parseInt(card.dataset.index);
+                        const frontElement = card.querySelector('.card-front');
+                        frontElement.style.backgroundImage = `url('${originalImageUrls[idx]}')`;
+                        card.classList.add('revealed');
+                        card.classList.remove('flipped'); 
+                    } else if (wasRevealed) {
+                        const idx = parseInt(card.dataset.index);
+                        const frontElement = card.querySelector('.card-front');
+                        frontElement.style.backgroundImage = `url('${manipulatedImageUrls[idx]}')`;
+                        card.classList.remove('revealed');
+                        card.classList.add('flipped');
+                    }
+                });
+
+                world.appendChild(card);
+                cards.push(card);
+            });
+
+            window.filterCards = function(groupName, element) {
+                if (event) event.stopPropagation();
+                if (!isScattered) scatterCards();
+                if (activeGroup === groupName) { resetFilter(); return; }
+                activeGroup = groupName;
+                document.querySelectorAll('.legend-item').forEach(item => item.classList.remove('active'));
+                if(element) element.classList.add('active');
+                cards.forEach(card => {
+                    if (card.dataset.group === groupName) { card.classList.remove('hidden'); } 
+                    else { card.classList.add('hidden'); card.classList.remove('flipped'); card.classList.remove('revealed'); }
+                });
+            };
+
+            function resetFilter() {
+                activeGroup = null;
+                document.querySelectorAll('.legend-item').forEach(item => item.classList.remove('active'));
+                cards.forEach(card => card.classList.remove('hidden'));
+            }
+
+            function scatterCards() {
+                if(isScattered) return;
+                isScattered = true;
+                cards.forEach(card => {
+                    // 화면 중앙 기준 산개 로직 (정확한 센터링)
+                    const rangeX = window.innerWidth * 0.35; // 좌우 폭 70%
+                    const rangeY = window.innerHeight * 0.35; // 상하 폭 70%
+                    const x = (Math.random() - 0.5) * 2 * rangeX;
+                    const y = (Math.random() - 0.5) * 2 * rangeY;
+                    const z = (Math.random() - 0.5) * 800;
+                    const rx = (Math.random() - 0.5) * 60;
+                    const ry = (Math.random() - 0.5) * 60;
+                    const rz = (Math.random() - 0.5) * 30;
+                    card.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+                });
+                document.querySelector('.overlay-text').style.opacity = 0.5;
+            }
+
+            function resetCards() {
+                isScattered = false;
+                resetFilter();
+                cards.forEach(card => {
+                    card.style.transform = `translate3d(0,0,0) rotate(${Math.random() * 4 - 2}deg)`;
+                    card.classList.remove('flipped');
+                    card.classList.remove('revealed');
+                    const frontElement = card.querySelector('.card-front');
+                    const idx = parseInt(card.dataset.index);
+                    frontElement.style.backgroundImage = `url('${manipulatedImageUrls[idx]}')`;
+                });
+                document.querySelector('.overlay-text').style.opacity = 1;
+            }
+
+            document.addEventListener('click', () => {
+                if (isScattered) return;
+                scatterCards();
+            });
+
+            document.addEventListener('dblclick', () => {
+                if (!isScattered) return;
+                resetCards();
+            });
+
+            // MediaPipe 초기화 (안전 실행)
+            if (typeof Hands !== 'undefined' && typeof Camera !== 'undefined') {
+                const videoElement = document.querySelector('.input_video');
+                const cameraStatus = document.getElementById('cameraStatus');
+
+                function onResults(results) {
+                    cameraStatus.innerText = "Camera Active";
+                    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                        const landmarks = results.multiHandLandmarks[0];
+                        const wrist = landmarks[0];
+                        const middleTip = landmarks[12];
+                        const distance = Math.sqrt(Math.pow(wrist.x - middleTip.x, 2) + Math.pow(wrist.y - middleTip.y, 2));
+                        const threshold = 0.25;
+                        if (distance > threshold) {
+                            if (!isScattered) scatterCards();
+                        } else {
+                            if (isScattered) resetCards();
+                        }
+                    }
+                }
+
+                const hands = new Hands({locateFile: (file) => {
+                    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+                }});
+
+                hands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                hands.onResults(onResults);
+
+                const camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                camera.start().catch(err => {
+                    console.error("Camera Error:", err);
+                    cameraStatus.innerText = "Camera Error";
+                });
+            }
+        });
+    </script>
 </body>
 </html>
